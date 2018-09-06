@@ -99,6 +99,7 @@ public class HttpClientUtil {
             if (url.startsWith("https")) {
                 // 执行 Https 请求.
                 client = createSSLInsecureClient();
+                client.getParams();
                 res = client.execute(post);
             } else {
                 // 执行 Http 请求.

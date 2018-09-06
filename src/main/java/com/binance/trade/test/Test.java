@@ -8,20 +8,35 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.conn.ConnectTimeoutException;
 
+import com.alibaba.fastjson.JSONObject;
 import com.binance.trade.utils.HttpClientUtil;
 import com.binance.trade.utils.SignatureUtils;
 
 public class Test {
 
 	public static void main(String[] args) {
+		String timeObj = null;
+		try {
+			HttpClientUtil.get("https://api.binance.com/api/v1/ping", "utf-8", HttpClientUtil.CONNTIMEOUT, HttpClientUtil.READTIMEOUT);
+			//timeObj = HttpClientUtil.get("https://www.google.com", "utf-8", HttpClientUtil.CONNTIMEOUT, HttpClientUtil.READTIMEOUT);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		if(StringUtils.isNotBlank(timeObj)) {
+			timeObj = JSONObject.parseObject(timeObj).getString("serverTime");
+		}
+		System.out.println(timeObj);
 		String accountUrl = "https://api.binance.com/api/v3/account";
+		
+		
 		Map<String,String> map = new HashMap<String,String>();
 		String secretKey = "dhBqV9dgobHNUcMfrceVbKiFw7el7oTcb5phx2cpXBjMYXPZrnPCpYJ0VCn2QmkI";
-		map.put("api_key", "sSFs18IGntXcK0gkEQ7aQrsjGGOCBk379F3m02VNTaHxYcoFj4QOEGFBZDJSqcGA");
+		//map.put("api_key", "sSFs18IGntXcK0gkEQ7aQrsjGGOCBk379F3m02VNTaHxYcoFj4QOEGFBZDJSqcGA");
 		map.put("recvWindow", "5000");
-		map.put("timestamp", "1499827319559");
+		map.put("timestamp", timeObj);///api/v1/time
 		String msg = SignatureUtils.enHmacSHA256(map, secretKey);
 		accountUrl += "?recvWindow=5000&timestamp=1499827319559&signature="+msg;
 		System.out.println(msg);
